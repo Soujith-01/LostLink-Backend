@@ -24,8 +24,23 @@ const claimSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'approved', 'rejected'],
+      enum: ['pending', 'verified', 'approved', 'rejected'],
       default: 'pending',
+    },
+    deliveryMethod: {
+      type: String,
+      enum: ['deliver', 'meetup', null],
+      default: null,
+    },
+    meetupLocation: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    meetupTime: {
+      type: String,
+      trim: true,
+      default: '',
     },
   },
   {
