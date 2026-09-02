@@ -1,4 +1,6 @@
 import exp from 'express'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -10,13 +12,59 @@ import userApp from './APIS/userApi.js'
 import itemApp from './APIS/ItemApi.js'
 import claimApp from './APIS/ClaimApi.js'
 import adminApp from './APIS/AdminApi.js'
+import notificationApp from './APIS/notificationApi.js'
 
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js'
 
 config()
 
 const app = exp()
+const server = createServer(app)
 const PORT = parseInt(process.env.PORT, 10) || 3000
+
+// Socket.io setup
+const io = new Server(server, {
+	cors: {
+		origin: process.env.CLIENT_URL
+			? process.env.CLIENT_URL.split(',').map((o) => o.trim())
+			: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+		methods: ['GET', 'POST'],
+		credentials: true,
+	},
+})
+
+// Track connected users: userId -> Set of socket IDs
+const connectedUsers = new Map()
+
+io.on('connection', (socket) => {
+	console.log(`[Socket] Client connected: ${socket.id}`)
+
+	// User registers their userId with the socket
+	socket.on('register', (userId) => {
+		if (userId) {
+			socket.userId = userId
+			if (!connectedUsers.has(userId)) {
+				connectedUsers.set(userId, new Set())
+			}
+			connectedUsers.get(userId).add(socket.id)
+			console.log(`[Socket] User ${userId} registered with socket ${socket.id}`)
+		}
+	})
+
+	socket.on('disconnect', () => {
+		if (socket.userId && connectedUsers.has(socket.userId)) {
+			connectedUsers.get(socket.userId).delete(socket.id)
+			if (connectedUsers.get(socket.userId).size === 0) {
+				connectedUsers.delete(socket.userId)
+			}
+		}
+		console.log(`[Socket] Client disconnected: ${socket.id}`)
+	})
+})
+
+// Make io and connectedUsers accessible in route handlers
+app.set('io', io)
+app.set('connectedUsers', connectedUsers)
 
 app.use(helmet())
 
@@ -55,6 +103,7 @@ app.use('/api/user', userApp)
 app.use('/api/items', itemApp)
 app.use('/api/claims', claimApp)
 app.use('/api/admin', adminApp)
+app.use('/api/notifications', notificationApp)
 
 app.use(notFound)
 app.use(errorHandler)
@@ -76,10 +125,10 @@ const startServer = async () => {
 			await mongoose.connect(mongoUri)
 			console.log('[MongoDB] Connected successfully')
 		}
-		const server = app.listen(PORT, () => {
-			console.log(`[LostLink Server] Listening on port ${PORT}`)
-		})
-		return server
+	server.listen(PORT, () => {
+		console.log(`[LostLink Server] Listening on port ${PORT}`)
+	})
+	return server
 	} catch (err) {
 		console.error(`[DB Error] ${err.message}`)
 	}
