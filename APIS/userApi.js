@@ -18,7 +18,7 @@ const generateToken = (userId) => {
 // User Registration
 userApp.post('/register', async (req, res) => {
 	try {
-		const { name, email, password, phone } = req.body
+		const { name, email, password } = req.body
 
 		if (!name || !email || !password) {
 			return res.status(400).json({ message: 'Name, email, and password are required' })
@@ -33,7 +33,6 @@ userApp.post('/register', async (req, res) => {
 			name,
 			email,
 			password,
-			phone: phone || '',
 			role: 'user',
 		})
 

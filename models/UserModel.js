@@ -22,11 +22,6 @@ const userSchema = new mongoose.Schema(
       minlength: [6, 'Password must be at least 6 characters'],
       select: false,
     },
-    phone: {
-      type: String,
-      trim: true,
-      default: '',
-    },
     avatar: {
       url: { type: String, default: '' },
       public_id: { type: String, default: '' },
