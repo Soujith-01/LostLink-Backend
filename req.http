@@ -1,0 +1,160 @@
+### health check
+GET http://localhost:3000/api/health
+
+### create new user
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+    "name" : "John Doe",
+    "email" : "john@gmail.com",
+    "password" : "johnpassword",
+    "phone" : "9876543210"
+}
+
+### create admin user
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+    "name" : "Admin User",
+    "email" : "admin@gmail.com",
+    "password" : "adminpassword",
+    "role" : "admin"
+}
+
+### user login
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+    "email" : "john@gmail.com",
+    "password" : "johnpassword"
+}
+
+### admin login
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+    "email" : "admin@gmail.com",
+    "password" : "adminpassword"
+}
+
+### get user profile
+GET http://localhost:3000/api/user/profile
+
+### user logout
+POST http://localhost:3000/api/user/logout
+
+### post lost item
+POST http://localhost:3000/api/items/items
+Content-Type: application/json
+
+{
+    "title" : "Black Wallet",
+    "description" : "Lost black leather wallet yesterday",
+    "category" : "Wallets",
+    "type" : "lost",
+    "city" : "Metropolis",
+    "area" : "Central Park"
+}
+
+### post found item
+POST http://localhost:3000/api/items/items
+Content-Type: application/json
+
+{
+    "title" : "Black Wallet",
+    "description" : "Found black leather wallet near food court",
+    "category" : "Wallets",
+    "type" : "found",
+    "city" : "Metropolis",
+    "area" : "Central Park",
+    "verificationQuestion" : "What initials are engraved inside?",
+    "verificationAnswer" : "J.D."
+}
+
+### get all items
+GET http://localhost:3000/api/items/items?search=wallet&category=Wallets&type=found&page=1&limit=10
+
+### get my items
+GET http://localhost:3000/api/items/my-items
+
+### get item by id
+GET http://localhost:3000/api/items/items/ITEM_ID_HERE
+
+### get item matches
+GET http://localhost:3000/api/items/items/ITEM_ID_HERE/matches
+
+### update item
+PUT http://localhost:3000/api/items/items/ITEM_ID_HERE
+Content-Type: application/json
+
+{
+    "title" : "Black Wallet (Updated)",
+    "description" : "Found near main food court area",
+    "city" : "Metropolis",
+    "area" : "Central Park"
+}
+
+### delete item
+DELETE http://localhost:3000/api/items/items/ITEM_ID_HERE
+
+### submit claim
+POST http://localhost:3000/api/claims/claims/ITEM_ID_HERE
+Content-Type: application/json
+
+{
+    "answer" : "J.D.",
+    "message" : "This is my wallet"
+}
+
+### get my claims
+GET http://localhost:3000/api/claims/my-claims
+
+### get item claims
+GET http://localhost:3000/api/claims/item-claims/ITEM_ID_HERE
+
+### approve claim
+PATCH http://localhost:3000/api/claims/claims/CLAIM_ID_HERE/approve
+
+### reject claim
+PATCH http://localhost:3000/api/claims/claims/CLAIM_ID_HERE/reject
+
+### get admin statistics
+GET http://localhost:3000/api/admin/statistics
+
+### get admin users list
+GET http://localhost:3000/api/admin/users?page=1&limit=10
+
+### get admin items list
+GET http://localhost:3000/api/admin/items?page=1&limit=10
+
+### get admin claims list
+GET http://localhost:3000/api/admin/claims?page=1&limit=10
+
+### update user role
+PATCH http://localhost:3000/api/admin/users/USER_ID_HERE/role
+Content-Type: application/json
+
+{
+    "role" : "admin"
+}
+
+### update user status
+PATCH http://localhost:3000/api/admin/users/USER_ID_HERE/status
+Content-Type: application/json
+
+{
+    "isActive" : true
+}
+
+### deactivate user
+PATCH http://localhost:3000/api/admin/users/USER_ID_HERE/deactivate
+
+### delete user
+DELETE http://localhost:3000/api/admin/users/USER_ID_HERE
+
+### delete admin item
+DELETE http://localhost:3000/api/admin/items/ITEM_ID_HERE

@@ -1,0 +1,77 @@
+### create new user
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+    "name" : "userr3",
+    "email" : "user3@gmail.com",
+    "password" : "user03",
+    "role" : "user"
+}
+
+### user login
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+    "email" : "user3@gmail.com",
+    "password" : "user3"
+}
+
+### user profile
+GET http://localhost:3000/api/user/profile
+
+### user logout
+POST http://localhost:3000/api/user/logout
+
+### post lost item
+POST http://localhost:3000/api/items/items
+Content-Type: application/json
+
+{
+    "title" : "Black Leather Wallet",
+    "description" : "Lost black wallet at central park food court",
+    "category" : "Wallets",
+    "type" : "lost",
+    "city" : "Metropolis",
+    "area" : "Central Park"
+}
+
+### post found item
+POST http://localhost:3000/api/items/items
+Content-Type: application/json
+
+{
+    "title" : "Black Leather Wallet",
+    "description" : "Found black wallet near central park area",
+    "category" : "Wallets",
+    "type" : "found",
+    "city" : "Metropolis",
+    "area" : "Central Park",
+    "verificationQuestion" : "What initials are engraved inside?",
+    "verificationAnswer" : "J.D."
+}
+
+### get all items
+GET http://localhost:3000/api/items/items
+
+### get item matches
+GET http://localhost:3000/api/items/items/ITEM_ID_HERE/matches
+
+### submit claim
+POST http://localhost:3000/api/claims/claims/ITEM_ID_HERE
+Content-Type: application/json
+
+{
+    "answer" : "J.D.",
+    "message" : "This is my wallet, I lost it near food court"
+}
+
+### approve claim
+PATCH http://localhost:3000/api/claims/claims/CLAIM_ID_HERE/approve
+
+### reject claim
+PATCH http://localhost:3000/api/claims/claims/CLAIM_ID_HERE/reject
+
+### get admin statistics
+GET http://localhost:3000/api/admin/statistics

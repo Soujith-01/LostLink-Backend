@@ -70,19 +70,28 @@ process.on('unhandledRejection', (reason, promise) => {
 })
 
 const startServer = async () => {
-	try {
-		const mongoUri = process.env.MONGODB_URI || process.env.DB_URL
-		if (mongoUri) {
+	const mongoCandidates = [process.env.MONGODB_URI, process.env.DB_URL].filter(Boolean)
+	let mongoConnected = false
+
+	for (const mongoUri of mongoCandidates) {
+		try {
 			await mongoose.connect(mongoUri)
 			console.log('[MongoDB] Connected successfully')
+			mongoConnected = true
+			break
+		} catch (err) {
+			console.error(`[MongoDB] Failed to connect using configured URI: ${err.message}`)
 		}
-		const server = app.listen(PORT, () => {
-			console.log(`[LostLink Server] Listening on port ${PORT}`)
-		})
-		return server
-	} catch (err) {
-		console.error(`[DB Error] ${err.message}`)
 	}
+
+	if (!mongoConnected && mongoCandidates.length > 0) {
+		console.warn('[MongoDB] Server started without a successful database connection. Check your MongoDB URI or network access.')
+	}
+
+	const server = app.listen(PORT, () => {
+		console.log(`[LostLink Server] Listening on port ${PORT}`)
+	})
+	return server
 }
 
 if (process.env.NODE_ENV !== 'test') {
