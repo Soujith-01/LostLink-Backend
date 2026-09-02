@@ -3,7 +3,7 @@ import ItemModel from '../models/ItemModel.js';
 const calculateTextSimilarity = (str1, str2) => {
   if (!str1 || !str2) return 0;
   const normalize = (text) =>
-    text
+    String(text)
       .toLowerCase()
       .replace(/[^\w\s]/gi, '')
       .split(/\s+/)
@@ -30,22 +30,25 @@ const calculateDateProximity = (date1, date2) => {
   return 1 - (diffInDays - 3) / 27;
 };
 
-const calculateLocationScore = (loc1, loc2) => {
-  if (!loc1 || !loc2) return 0;
-  const city1 = (loc1.city || '').toLowerCase().trim();
-  const city2 = (loc2.city || '').toLowerCase().trim();
-  if (city1 !== city2) return 0;
-
-  const area1 = (loc1.area || '').toLowerCase().trim();
-  const area2 = (loc2.area || '').toLowerCase().trim();
-
-  if (area1 && area2) {
-    if (area1 === area2) return 1.0;
-    const similarity = calculateTextSimilarity(area1, area2);
-    return 0.6 + similarity * 0.4;
+const normalizeLocation = (location) => {
+  if (!location) return '';
+  if (typeof location === 'string') return location.trim();
+  if (typeof location === 'object') {
+    const parts = [location.city, location.area].filter(Boolean).map((part) => String(part).trim());
+    return parts.join(', ');
   }
+  return String(location).trim();
+};
 
-  return 0.7;
+const calculateLocationScore = (loc1, loc2) => {
+  const location1 = normalizeLocation(loc1);
+  const location2 = normalizeLocation(loc2);
+
+  if (!location1 || !location2) return 0;
+  if (location1.toLowerCase() === location2.toLowerCase()) return 1;
+
+  const similarity = calculateTextSimilarity(location1, location2);
+  return 0.6 + similarity * 0.4;
 };
 
 export const findItemMatches = async (targetItemId, limit = 10) => {

@@ -24,12 +24,8 @@ const itemSchema = new mongoose.Schema(
       required: [true, 'Item type must be either lost or found'],
     },
     location: {
-      city: { type: String, required: [true, 'Please specify city'], trim: true },
-      area: { type: String, required: [true, 'Please specify area or landmark'], trim: true },
-      coordinates: {
-        lat: { type: Number, default: null },
-        lng: { type: Number, default: null },
-      },
+      type:String,
+      required:[true,'lcation required']
     },
     date: {
       type: Date,
